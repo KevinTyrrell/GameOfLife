@@ -1,7 +1,7 @@
 
 #include "LinkedList.h"
 
-// Constructor for the LinkedList.
+/* Constructor function. */
 struct LinkedList* LinkedList_new()
 {
 	struct LinkedList *temp = malloc(sizeof(struct LinkedList));
@@ -11,7 +11,7 @@ struct LinkedList* LinkedList_new()
 	return temp;
 }
 
-// Constructor for the ll_Node.
+/* Constructor function. */
 static struct ll_Node* ll_Node_new(void *data)
 {
 	struct ll_Node *temp = malloc(sizeof(struct ll_Node));
@@ -21,7 +21,13 @@ static struct ll_Node* ll_Node_new(void *data)
 	return temp;
 }
 
-// Locates a ll_Node within the LinkedList based on the index.
+/* 
+Helper function. Locates a Node by index in the LinkedList. 
+
+O(log n) complexity.
+Prints an error if the index was out of bounds.
+Returns NULL if the Node cannot be located.
+*/
 static struct ll_Node* ll_find(struct LinkedList *list, unsigned int index)
 {
 	if (index > list->_size)
@@ -58,7 +64,11 @@ static struct ll_Node* ll_find(struct LinkedList *list, unsigned int index)
 	return NULL;
 }
 
-// Inserts a ll_Node at the front of the LinkedList.
+/* 
+Adds data at the front of the LinkedList.
+
+O(1) complexity.
+*/
 void ll_add(struct LinkedList *list, void *data)
 {
 	struct ll_Node *inserted = ll_Node_new(data);
@@ -80,7 +90,12 @@ void ll_add(struct LinkedList *list, void *data)
 	list->_size++;
 }
 
-// Inserts a ll_Node at a given index inside the LinkedList.
+/*
+Adds data at the given index in the LinkedList.
+
+O(log n) complexity (worst case).
+Prints an error if the index is out of bounds.
+*/
 void ll_addAt(struct LinkedList *list, unsigned int index, void *data)
 {
 	if (index > list->_size)
@@ -106,8 +121,11 @@ void ll_addAt(struct LinkedList *list, unsigned int index, void *data)
 	}
 }
 
-// Inserts a ll_Node at the end of the LinkedList.
-// O(1) complexity.
+/*
+Adds data to the end of the LinkedList.
+
+O(1) complexity.
+*/
 void ll_addLast(struct LinkedList *list, void *data)
 {
 	if (list->_size == 0)
@@ -122,7 +140,12 @@ void ll_addLast(struct LinkedList *list, void *data)
 	}
 }
 
-// Remove's a ll_Node at a given index.
+/*
+Removes a Node at the given index.
+
+O(log n) complexity (worst case).
+Prints an error if the index is out of bounds.
+*/
 void ll_removeAt(struct LinkedList *list, unsigned int index)
 {
 	if (index >= list->_size)
@@ -146,38 +169,46 @@ void ll_removeAt(struct LinkedList *list, unsigned int index)
 	}
 }
 
-// Remove's the first ll_Node whose data matches the parameter, if it exists.
+/* 
+Attempts to remove a Node with matching data, if it exists. 
+
+O(log n) complexity (worst case).
+Returns false if it could not locate a matching Node.
+*/
 bool ll_remove(struct LinkedList *list, void *data)
 {
-	struct ll_Node *temp = list->root;
-	while (temp != NULL)
+	struct ll_Node *seek = list->root;
+	while (seek != NULL)
 	{
-		if (temp->data == data)
+		if (seek->data == data)
 		{
 			if (list->_size == 1)
 				ll_clear(list);
-			else if (temp->prev == NULL)
+			else if (seek->prev == NULL)
 				ll_removeFirst(list);
-			else if (temp->next == NULL)
+			else if (seek->next == NULL)
 				ll_removeLast(list);
 			else
 			{
-				temp->prev->next = temp->next;
-				temp->next->prev = temp->prev;
-				free(temp);
+				seek->prev->next = seek->next;
+				seek->next->prev = seek->prev;
+				free(seek);
 				list->_size--;
 			}
 			
 			return true;
 		}
-		temp = temp->next;
+		seek = seek->next;
 	}
 
 	return false;
 }
 
-// Remove's the first ll_Node in the LinkedList.
-// O(1) complexity.
+/*
+Removes the first Node of the LinkedList.
+
+O(1) complexity.
+*/
 void ll_removeFirst(struct LinkedList *list)
 {
 	if (list->_size > 0)
@@ -194,8 +225,11 @@ void ll_removeFirst(struct LinkedList *list)
 	}
 }
 
-// Remove's the last ll_Node in the LinkedList.
-// O(1) complexity.
+/* 
+Removes the last Node of the LinkedList.
+
+O(1) complexity.
+*/
 void ll_removeLast(struct LinkedList *list)
 {
 	if (list->_size > 0)
@@ -210,8 +244,11 @@ void ll_removeLast(struct LinkedList *list)
 		}
 }
 
-// Clear the LinkedList of ll_Nodes.
-// O(n) complexity.
+/* 
+Destroys every Node of the LinkedList. 
+
+O(n) complexity.
+*/
 void ll_clear(struct LinkedList *list)
 {
 	struct ll_Node *garbageTruck = list->root;
@@ -227,26 +264,32 @@ void ll_clear(struct LinkedList *list)
 	list->_size = 0;
 }
 
-// Copies a given LinkedList and returns the cloned version.
-// O(n) complexity.
+/* 
+Returns a copy of the LinkedList.
+
+O(n) complexity.
+*/
 struct LinkedList* ll_clone(const struct LinkedList *list)
 {
 	if (list == NULL)
 		return NULL;
 
 	struct LinkedList *copy = LinkedList_new();
-	struct ll_Node *root = list->root;
-	while (root != NULL)
+	struct ll_Node *seek = list->root;
+	while (seek != NULL)
 	{
-		ll_addLast(copy, root->data);
-		root = root->next;
+		ll_addLast(copy, seek->data);
+		seek = seek->next;
 	}
 
 	return copy;
 }
 
-// Deconstructor.
-// O(n) complexity.
+/* 
+Deconstructor function. Call with &list.
+
+O(n) complexity.
+*/
 void ll_destroy(struct LinkedList *list)
 {
 	struct ll_Node *garbageTruck = list->root;
@@ -259,19 +302,23 @@ void ll_destroy(struct LinkedList *list)
 	free(list);
 }
 
-// Prints out the LinkedList to the terminal window.
-// O(n) complexity.
+/* 
+Prints out the LinkedList to the console window. 
+
+O(n) complexity.
+Attempts to cast the void* data into char*.
+*/
 void ll_print(struct LinkedList *list)
 {
 	printf("%c", '{');
 
-	struct ll_Node *temp = list->root;
-	while (temp != NULL)
+	struct ll_Node *seek = list->root;
+	while (seek != NULL)
 	{
-		printf(" %s", (char*)temp->data);
-		if (temp->next != NULL)
+		printf(" %s", (char*)seek->data);
+		if (seek->next != NULL)
 			printf("%c", ',');
-		temp = temp->next;
+		seek = seek->next;
 	}
 
 	printf(" }\n");

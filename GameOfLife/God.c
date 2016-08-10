@@ -1,57 +1,16 @@
 
-#include "CellArray.h"
-#include "LinkedList.h"
-#include <windows.h>
-#include <time.h>
-#include <conio.h>
+#include "God.h"
 
 /*
-Any live cell with fewer than two live neighbours dies, as if caused by under-population.
-Any live cell with two or three live neighbours lives on to the next generation.
-Any live cell with more than three live neighbours dies, as if by over-population.
-Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
-*/
-
-// Area which houses the cells.
-struct CellArray *area;
-// Second data structure to track only the living cells.
-struct LinkedList *livingCells;
-// Boolean variable of whether or not the user wishes to end the program.
-bool FLAG_EXIT_PROGRAM = false;
-
-// What generation we are currently in.
-unsigned long long generation = 0;
-
-void update();
-void populate();
-void listenForExit();
-
-int main()
-{
-	populate();
-	HANDLE exitThread = CreateThread(NULL, 0, listenForExit, NULL, 0, NULL);
-	Sleep(5000);
-	while (!FLAG_EXIT_PROGRAM)
-	{
-		CellArray_print(area, generation);
-		update();
-		Sleep(250);
-	}
-
-	CellArray_destroy(area);
-	ll_destroy(livingCells);
-	return 0;
-}
-
-/*
-Ascend into the next generation by following the rules below:
+Ascends all eligilbe cells through to the next generation.
+Every cell must abide by the four rules below:
 
 Any live cell with fewer than two live neighbours dies, as if caused by under-population. < 2
 Any live cell with two or three live neighbours lives on to the next generation. >= 2 && <= 3
 Any live cell with more than three live neighbours dies, as if by over-population. > 3
 Any dead cell with exactly three live neighbours becomes a live cell, as if by reproduction.
 */
-void update()
+void nextGeneration()
 {
 	// Create a new CellArray for cells to be placed onto.
 	struct CellArray *future = CellArray_new(area->rows, area->columns);
@@ -111,23 +70,24 @@ void update()
 	future->population = (unsigned int)list->_size;
 
 	// In threads, handle the cleanup of memory in old generations.
-	HANDLE thread1 = CreateThread(NULL, 0, ll_destroy, livingCells, 0, NULL);
-	HANDLE thread2 = CreateThread(NULL, 0, CellArray_destroy, area, 0, NULL);
+	HANDLE listCleaner = CreateThread(NULL, 0, ll_destroy, livingCells, 0, NULL);
+	HANDLE cellCleaner = CreateThread(NULL, 0, CellArray_destroy, area, 0, NULL);
 
 	// Set the future generation as the current one.
 	area = future;
 	livingCells = list;
 }
 
-// Initializes the area with randomly generated cells.
+/* 
+Populates the grid with cells based on the config file. 
+*/
 void populate()
 {
-	unsigned int initPopulation = 150,
-		columns = 60, rows = 20;
-	time_t seed = 5000; // time(NULL)
+	// If config provides 0, make the seed random.
+	time_t seed = SEED == 0 ? time(NULL) : SEED;
 
 	// Initialize the land for the cells to live on.
-	area = CellArray_new(rows, columns);
+	area = CellArray_new(ROWS, COLUMNS);
 	livingCells = LinkedList_new();
 
 	// Get a random seed based on the clock.
@@ -136,18 +96,12 @@ void populate()
 	rand();
 	rand();
 
-	if (initPopulation > columns * rows)
-	{
-		fprintf(stderr, "%s%s\n",
-			"Error: Your population cannot fit within the amount of rows & columns provided.",
-			" Resetting the population.");
-		system("pause");
-		initPopulation = (unsigned int)(columns * rows * 0.9);
-	}
+	if (INIT_POPULATION > ROWS * COLUMNS)
+		endProgram(1, "Error: Your population cannot fit within the amount of rows & columns provided.");		
 
 	time_t now = time(NULL);
 	// Attempt to place the entire population in the 2D array.
-	while (area->population < initPopulation)
+	while (area->population < (unsigned int)INIT_POPULATION)
 	{
 		// Timeout if it takes too long.
 		if ((long)time(NULL) - (long)now > 10)
@@ -159,8 +113,8 @@ void populate()
 		}
 
 		// Randomly place this Node in the 2D array.
-		int x = rand() % columns;
-		int y = rand() % rows;
+		int x = rand() % COLUMNS;
+		int y = rand() % ROWS;
 
 		if (area->arr[y][x] == NULL)
 		{
@@ -169,21 +123,5 @@ void populate()
 			area->population++;
 			ll_add(livingCells, born);
 		}
-	}
-}
-
-// Listen a spacebar press indicating the user wants to quit.
-void listenForExit()
-{
-	const DWORD BUFFER_TIME_MS = 30;
-
-	while (true)
-	{
-		if (_kbhit() && _getch() == ' ')
-		{
-			FLAG_EXIT_PROGRAM = true;
-			return;
-		}
-		Sleep(BUFFER_TIME_MS);
 	}
 }

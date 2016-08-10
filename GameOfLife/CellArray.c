@@ -1,7 +1,7 @@
 
 #include "CellArray.h"
 
-// Constructor function.
+/* Constructor function. */
 struct CellArray *CellArray_new(size_t rows, size_t columns)
 {
 	struct Cell ***arr = malloc(rows * sizeof(struct Cell**));
@@ -23,9 +23,13 @@ struct CellArray *CellArray_new(size_t rows, size_t columns)
 	return area;
 }
 
-// Count how many non-NULL Cells surround this index, inclduing diagonals.
-// Keep searching around this index until `stop` number of Cells are counted.
-// Stop exists so we do not do unneccesary searching.
+/* 
+Counts the number of live cells around a given index. 
+
+Count how many non-NULL Cells surround this index, inclduing diagonals.
+Keep searching around this index until `stop` number of Cells are counted.
+We end at `stop` number of cells so we do not do unneccesary searching.
+*/
 char CellArray_countN(struct CellArray *area, unsigned int x, unsigned int y, char stop)
 {
 	if (x >= area->columns || y >= area->rows)
@@ -50,7 +54,7 @@ char CellArray_countN(struct CellArray *area, unsigned int x, unsigned int y, ch
 	return count;
 }
 
-// Deconstructor function.
+/* Deconstructor function. Call with &area. */
 void CellArray_destroy(struct CellArray *area)
 {
 	for (size_t i = 0; i < area->rows; i++)
@@ -64,23 +68,35 @@ void CellArray_destroy(struct CellArray *area)
 	free(area);
 }
 
+/* 
+Prints out the CellArray to the console window.
+
+If the dimensions of the CellArray are too large,
+then only the statistics will print and not the cells.
+*/
 void CellArray_print(struct CellArray *area, unsigned long long generation)
 {
-	const char DEAD = ' ', ALIVE = 254;
-
 	system("cls");
-	for (size_t i = 0; i < area->columns; i++)
-		printf("%c", '-');
-	printf("\n");
-
-	for (size_t i = 0; i < area->rows; i++)
+	// 77 x 20 is the max resolution that we can print nicely.
+	if (area->columns <= MAX_COLUMNS && area->rows <= MAX_ROWS)
 	{
-		for (size_t h = 0; h < area->columns; h++)
-			printf("%c", (area->arr[i][h] != NULL) ? ALIVE : DEAD);
+		for (size_t i = 0; i < area->columns + 2; i++)
+			printf("%c", FLOOR);
 		printf("\n");
-	}
 
-	for (size_t i = 0; i < area->columns; i++)
-		printf("%c", '-');
+		for (size_t i = 0; i < area->rows; i++)
+		{
+			printf("%c", WALL);
+			for (size_t h = 0; h < area->columns; h++)
+				printf("%c", (area->arr[i][h] != NULL) ? ALIVE : DEAD);
+			printf("%c\n", WALL);
+		}
+
+		for (size_t i = 0; i < area->columns + 2; i++)
+			printf("%c", FLOOR);
+	}
+	else
+		printf("\nGrid dimensions are too large. Cannot output to console window.");
+	
 	printf("\nGENERATION: %-25lluPOPULATION: %u\n", generation, area->population);
 }
