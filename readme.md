@@ -30,11 +30,11 @@ The program uses two primary **data structures**. A 2D array for the grid of Cel
 
 Instead of searching every single cell in this figure:
 
-![img1](http://imgur.com/5QngK5K "Example Cell Array")
+![img1](http://i.imgur.com/5QngK5K.jpg "Example Cell Array")
 
 I will only need to search through the cells highlighted in black/pink.
 
-![img2](http://imgur.com/AC1BLsn "Example Cell Array")
+![img2](http://i.imgur.com/AC1BLsn.jpg "Example Cell Array")
 
 
 ## Installation
