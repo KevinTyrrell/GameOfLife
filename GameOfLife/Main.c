@@ -3,14 +3,11 @@
 
 int main()
 {
-	/* Attempt to read the user's config file. */
-	FILE *f;
-	errno_t err = fopen_s(&f, CONFIG_FILE_NAME, "r+");
-	if (!err)
-		loadConfig(f);
-	else
-		endProgram(1, "Error: Your INI file could not be found.");
-	fclose(f);
+	/* Color the output window green. */
+	system("color 0A");
+	
+	/* Load the config file. */
+	loadConfig();
 
 	/* Intialize the grid with cells, dictated by the config file. */
 	populate();
@@ -27,11 +24,12 @@ int main()
 	*/
 	while (generation < ULLONG_MAX)
 	{
-		CellArray_print(area, generation);
+		CellArray_print(area);
 		nextGeneration();
 		Sleep(GENERATION_DELAY_MS);
 	}
 
+	/* Cleanup. */
 	CellArray_destroy(area);
 	ll_destroy(livingCells);
 

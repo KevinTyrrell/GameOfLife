@@ -2,6 +2,11 @@
 #include "LinkedList.h"
 
 /* Constructor function. */
+static struct ll_Node* ll_Node_new(void *data);
+/* Helper function. Locates a Node by index in the LinkedList. */
+static struct ll_Node* ll_find(struct LinkedList *list, unsigned int index);
+
+/* Constructor function. */
 struct LinkedList* LinkedList_new()
 {
 	struct LinkedList *temp = malloc(sizeof(struct LinkedList));

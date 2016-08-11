@@ -124,4 +124,6 @@ void populate()
 			ll_add(livingCells, born);
 		}
 	}
+
+	generation = 0;
 }

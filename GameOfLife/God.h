@@ -20,7 +20,7 @@ struct CellArray *area;
 // Second data structure to track only the living cells.
 struct LinkedList *livingCells;
 // What generation we are currently in.
-unsigned long long generation = 0;
+unsigned long long generation;
 
 /* Ascends all eligilbe cells through to the next generation. */
 void nextGeneration();

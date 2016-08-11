@@ -1,14 +1,11 @@
 
 #pragma once
 
+#include "Cell.h"
+#include "God.h"
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "Cell.h"
-
-/* Used for the printing the CellArray. */
-static const char DEAD = ' ', ALIVE = 254, WALL = '|', FLOOR = '-',
-MAX_COLUMNS = 77, MAX_ROWS = 20;
 
 /*
 2D Array of Cell which is the grid in which Cells live.
@@ -29,4 +26,4 @@ char CellArray_countN(struct CellArray *area, unsigned int x, unsigned int y, ch
 /* Deconstructor function. Call with &area. */
 void CellArray_destroy(struct CellArray *area);
 /* Prints out the CellArray to the console window. */
-void CellArray_print(struct CellArray *area, unsigned long long generation);
+void CellArray_print(struct CellArray *area);

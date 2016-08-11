@@ -1,18 +1,37 @@
 
 #include "Tools.h"
 
+/* INI file used for program setup. */
+static const char *CONFIG_FILE_NAME = "config.ini";
+/* Expected config file lines. */
+static const char *CONFIG_LINE_1 = "population=", *CONFIG_LINE_2 = "rows=",
+*CONFIG_LINE_3 = "columns=", *CONFIG_LINE_4 = "seed=", *CONFIG_LINE_5 = "print_ms=";
+
+/* Helper function. */
+static void helper_assignVar(FILE *f, const char *compare, int *assign);
+/* Helper function. */
+static int helper_parseLine(FILE *f, const char *compare);
+
 /* Attempts to load the config file as values. */
-void loadConfig(FILE *f) 
+void loadConfig() 
 {
+	/* Attempt to read the user's config file. */
+	FILE *f;
+	errno_t err = fopen_s(&f, CONFIG_FILE_NAME, "r+");
+	if (err)
+		endProgram(1, "Error: Your INI file could not be found.");
+
 	helper_assignVar(f, CONFIG_LINE_1, &INIT_POPULATION);
 	helper_assignVar(f, CONFIG_LINE_2, &ROWS);
 	helper_assignVar(f, CONFIG_LINE_3, &COLUMNS);
 	helper_assignVar(f, CONFIG_LINE_4, &SEED);
 	helper_assignVar(f, CONFIG_LINE_5, &GENERATION_DELAY_MS);
+
+	fclose(f);
 }
 
 /* Helper function to determine if we need to end the program from bad input. */
-void helper_assignVar(FILE *f, char *compare, int *assign)
+void helper_assignVar(FILE *f, const char *compare, int *assign)
 {
 	int input = helper_parseLine(f, compare);
 	if (input == -1)
@@ -29,7 +48,7 @@ If there is nothing more to read in the file,
 or if the data the user put in doesn't match what we expect,
 return -1 meaning that the INI file is malformed.
 */
-int helper_parseLine(FILE *f, char *compare)
+int helper_parseLine(FILE *f, const char *compare)
 {
 	char buffer[LINE_BUFFER_SIZE];
 	if (fscanf(f, " %1023s", buffer) == 1 && strlen(buffer) > strlen(compare))
@@ -67,7 +86,7 @@ int helper_parseLine(FILE *f, char *compare)
 				return -1;
 		}
 	
-		return value;
+		return (int)value;
 	}
 	
 	return -1;
@@ -82,7 +101,7 @@ bool fileExists(const char *filename)
 }
 
 /* Exits the program and provides the user with a message. */
-void endProgram(int code, char *message)
+void endProgram(const int code, const char *message)
 {
 	if (message != NULL)
 		fprintf(stderr, "%s%s\n", message, " Exiting program runtime.");

@@ -10,13 +10,6 @@ Version: 1.5
 #include <stdio.h>
 #include <stdbool.h>
 
-/* Node structure. */
-struct ll_Node
-{
-	void *data;
-	struct ll_Node *next, *prev;
-};
-
 /* LinkedList structure. */
 struct LinkedList
 {
@@ -24,13 +17,16 @@ struct LinkedList
 	size_t _size;
 };
 
+/* Node structure. */
+struct ll_Node
+{
+	void *data;
+	struct ll_Node *next, *prev;
+};
+
 /* Constructor function. */
 struct LinkedList* LinkedList_new();
-/* Constructor function. */
-static struct ll_Node* ll_Node_new(void *data);
 
-/* Helper function. Locates a Node by index in the LinkedList. */
-static struct ll_Node* ll_find(struct LinkedList *list, unsigned int index);
 /* Adds data at the front of the LinkedList. */
 void ll_add(struct LinkedList *list, void *data);
 /* Adds data at the given index in the LinkedList. */

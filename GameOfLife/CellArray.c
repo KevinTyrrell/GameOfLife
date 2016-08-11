@@ -1,6 +1,10 @@
 
 #include "CellArray.h"
 
+/* Used for the printing the CellArray. */
+static const char DEAD = ' ', ALIVE = 254, WALL = '|', FLOOR = '-',
+MAX_COLUMNS = 77, MAX_ROWS = 20;
+
 /* Constructor function. */
 struct CellArray *CellArray_new(size_t rows, size_t columns)
 {
@@ -74,7 +78,7 @@ Prints out the CellArray to the console window.
 If the dimensions of the CellArray are too large,
 then only the statistics will print and not the cells.
 */
-void CellArray_print(struct CellArray *area, unsigned long long generation)
+void CellArray_print(struct CellArray *area)
 {
 	system("cls");
 	// 77 x 20 is the max resolution that we can print nicely.
