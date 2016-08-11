@@ -32,7 +32,7 @@ Instead of searching every single cell in this figure:
 
 ![img1](http://i.imgur.com/5QngK5K.jpg "Example Cell Array")
 
-I will only need to search through the cells highlighted in black/pink.
+The program will only need to search through the cells highlighted in black/purple.
 
 ![img2](http://i.imgur.com/AC1BLsn.jpg "Example Cell Array")
 
@@ -41,18 +41,12 @@ I will only need to search through the cells highlighted in black/pink.
 
 This program requires Windows to run correcty. However, the source code is provided incase you would like to open and modify it in your editor.
 
-* Download the archive from GitHub in the top right hand corner.
-
-* Open `config.ini` and adjust the values accordingly. Each line must follow the pattern of `valuename=<NON-NEGATIVE INTEGER>` where `<NON-NEGATIVE INTEGER>` is an integer greater than `0`.
-
+1. Download the archive from GitHub in the top right hand corner.
+2. Open `config.ini` and adjust the values accordingly. Each line must follow the pattern of `valuename=<NON-NEGATIVE INTEGER>` where `<NON-NEGATIVE INTEGER>` is an integer greater than `0`.
 ..* `population` dictates the starting amount of living cells. It must not be greater than `columns * rows`. 
-
 ..* `rows` controls the amount of rows of the grid. If the value is greater than `20`, then it can no longer be printed to the console window.
-
 ..* `columns` controls the amount of columns of the grid. If the value is greater than `77`, then it can no longer be printed to the console window.
-
 ..* `seed` is the value which handles the pseudo-random placement of the `population` before the first generation begins. A value of `0` will mean a random generation on every execution while any another integer value will lead to the same simulation on every runtime for that value.
-
 ..* `print_ms` is the amount of time in `milliseconds` between each generation being printed. If this value is set too low, output to the console window will be severely impacted. Too fast and your `stdout` stream will be overloaded. Printing will depend on your CPU.
 
 
