@@ -1,8 +1,8 @@
 
 #pragma once
 
-#include "CellArray.h"
 #include "LinkedList.h"
+#include "CellArray.h"
 #include "Tools.h"
 #include <windows.h>
 #include <time.h>
@@ -28,4 +28,4 @@ void nextGeneration();
 void populate();
 
 /* Variables which dictate the structure for the simulation. */
-int GENERATION_DELAY_MS, INIT_POPULATION, ROWS, COLUMNS, SEED;
+unsigned int GENERATION_DELAY_MS, INIT_POPULATION, ROWS, COLUMNS, SEED;

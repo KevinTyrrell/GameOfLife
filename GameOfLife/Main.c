@@ -11,9 +11,6 @@ int main()
 
 	/* Intialize the grid with cells, dictated by the config file. */
 	populate();
-	
-	/* Allow the user to exit the program at any time by pressing a certain key. */
-	HANDLE exit = CreateThread(NULL, 0, listenForExit, NULL, 0, NULL);
 
 	/* 
 	Primary loop of the program. 

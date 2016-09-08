@@ -10,16 +10,18 @@ struct CellArray *CellArray_new(size_t rows, size_t columns)
 {
 	struct Cell ***arr = malloc(rows * sizeof(struct Cell**));
 	if (arr == NULL)
-		return NULL;
+		ds_Error(DS_MSG_OUT_OF_MEM);
 	
 	for (size_t i = 0; i < rows; i++)
 	{
 		arr[i] = calloc(columns, sizeof(struct Cell*));
 		if (arr[i] == NULL)
-			return NULL;
+			ds_Error(DS_MSG_OUT_OF_MEM);
 	}
 
 	struct CellArray *area = malloc(sizeof(struct CellArray));
+	if (area == NULL)
+		ds_Error(DS_MSG_OUT_OF_MEM);
 	area->arr = arr;
 	area->rows = rows;
 	area->columns = columns;
@@ -34,31 +36,29 @@ Count how many non-NULL Cells surround this index, inclduing diagonals.
 Keep searching around this index until `stop` number of Cells are counted.
 We end at `stop` number of cells so we do not do unneccesary searching.
 */
-char CellArray_countN(struct CellArray *area, unsigned int x, unsigned int y, char stop)
+int CellArray_countNeighbors(struct CellArray *area, unsigned int x, unsigned int y, int stop)
 {
-	if (x >= area->columns || y >= area->rows)
-	{
-		fprintf(stderr, "%s%u,%u%s%zu%zu%s\n",
-			"Error: Index Out of Bounds. Index was '(",
-			x, y, ")' but array is [", area->columns, area->rows, "].");
-		return -1;
-	}
-	
-	char count = 0;
+	int count = 0;
+
+	// Loop through a 3x3 grid over this cell, searching every neighbor.
 	for (unsigned int i = (x == 0) ? 0 : x - 1; i < area->columns && i <= x + 1; i++)
 		for (unsigned int h = (y == 0) ? 0 : y - 1; h < area->rows && h <= y + 1; h++)
 		{
-			// Ignore the source Cell.
-			if (i == x && h == y)
-				continue;
-			if (area->arr[h][i] != NULL && area->arr[h][i]->flag == false && ++count >= stop)
+			/*
+			If we're not over the source cell,
+			and if the cell we're looking at is alive,
+			AND if we've never been to this exact cell before
+			increase the counter and check if it's redundant to keep counting further.
+			*/
+			if ((i != x || h != y) && area->arr[h][i] != NULL && 
+				area->arr[h][i]->flag == false && ++count >= stop)
 				return count;
 		}
 
 	return count;
 }
 
-/* Deconstructor function. Call with &area. */
+/* Deconstructor function. */
 void CellArray_destroy(struct CellArray *area)
 {
 	for (size_t i = 0; i < area->rows; i++)
@@ -85,22 +85,22 @@ void CellArray_print(struct CellArray *area)
 	if (area->columns <= MAX_COLUMNS && area->rows <= MAX_ROWS)
 	{
 		for (size_t i = 0; i < area->columns + 2; i++)
-			printf("%c", FLOOR);
-		printf("\n");
+			printf_s("%c", FLOOR);
+		printf_s("\n");
 
 		for (size_t i = 0; i < area->rows; i++)
 		{
-			printf("%c", WALL);
+			printf_s("%c", WALL);
 			for (size_t h = 0; h < area->columns; h++)
-				printf("%c", (area->arr[i][h] != NULL) ? ALIVE : DEAD);
-			printf("%c\n", WALL);
+				printf_s("%c", (area->arr[i][h] != NULL) ? ALIVE : DEAD);
+			printf_s("%c\n", WALL);
 		}
 
 		for (size_t i = 0; i < area->columns + 2; i++)
-			printf("%c", FLOOR);
+			printf_s("%c", FLOOR);
 	}
 	else
-		printf("\nGrid dimensions are too large. Cannot output to console window.");
+		printf_s("\n%s", "Grid dimensions are too large. Cannot output to console window.");
 	
-	printf("\nGENERATION: %-25lluPOPULATION: %u\n", generation, area->population);
+	printf_s("\nGENERATION: %-25lluPOPULATION: %zu\n", generation, area->population);
 }
