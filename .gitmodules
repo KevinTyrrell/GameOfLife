@@ -1,3 +1,3 @@
 [submodule "C-DataStructures"]
-	path = C-DataStructures
+	path = GameOfLife/C-DataStructures
 	url = https://github.com/KevinTyrrell/C-DataStructures
